@@ -40,24 +40,24 @@ pipeline {
         }
 
         stage('Build Docker Image on QA') {
-            steps {
-                echo "Building Docker image on QA node..."
-                sh """
-                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
-                "cd ${TARGET_DIR} && docker build -t ${IMAGE} ."
-                """
-            }
-        }
+    steps {
+        echo "Building Docker image on QA node..."
+        sh """
+        ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
+        "cd ${TARGET_DIR} && sudo docker build -t ${IMAGE} ."
+        """
+    }
+}
 
-        stage('Run Docker Container on QA') {
-            steps {
-                echo "Running Docker container on QA node..."
-                sh """
-                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
-                "docker rm -f webapp || true && docker run -d --name webapp -p ${PORT}:80 ${IMAGE}"
-                """
-            }
-        }
+stage('Run Docker Container on QA') {
+    steps {
+        echo "Running Docker container on QA node..."
+        sh """
+        ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
+        "sudo docker rm -f webapp || true && sudo docker run -d --name webapp -p ${PORT}:80 ${IMAGE}"
+        """
+    }
+}
     }
 
     post {

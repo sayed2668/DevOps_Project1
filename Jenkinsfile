@@ -23,7 +23,7 @@ pipeline {
             steps {
                 echo "Installing Docker if not already installed..."
                 sh """
-                ansible all -i /etc/ansible/hosts -m shell -a \\
+                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
                 "which docker || (sudo apt update && sudo apt install -y docker.io && sudo usermod -aG docker ${REMOTE_USER})"
                 """
             }
@@ -33,8 +33,8 @@ pipeline {
             steps {
                 echo "Copying project files to QA node..."
                 sh """
-                ansible all -i /etc/ansible/hosts -m file -a "path=${TARGET_DIR} state=directory mode=0755"
-                ansible all -i /etc/ansible/hosts -m copy -a "src=. dest=${TARGET_DIR} owner=${REMOTE_USER} mode=0755"
+                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m file -a "path=${TARGET_DIR} state=directory mode=0755"
+                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m copy -a "src=. dest=${TARGET_DIR} owner=${REMOTE_USER} mode=0755"
                 """
             }
         }
@@ -43,7 +43,7 @@ pipeline {
             steps {
                 echo "Building Docker image on QA node..."
                 sh """
-                ansible all -i /etc/ansible/hosts -m shell -a \\
+                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
                 "cd ${TARGET_DIR} && docker build -t ${IMAGE} ."
                 """
             }
@@ -53,7 +53,7 @@ pipeline {
             steps {
                 echo "Running Docker container on QA node..."
                 sh """
-                ansible all -i /etc/ansible/hosts -m shell -a \\
+                ansible all -i /etc/ansible/hosts -u ${REMOTE_USER} -m shell -a \\
                 "docker rm -f webapp || true && docker run -d --name webapp -p ${PORT}:80 ${IMAGE}"
                 """
             }

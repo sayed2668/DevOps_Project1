@@ -1,0 +1,11 @@
+# ansible/deploy_k8s_manifest.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kool-form-pod
+spec:
+  containers:
+  - name: web-container
+    image: html-css-web:latest
+    ports:
+    - containerPort: 80

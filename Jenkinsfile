@@ -15,7 +15,7 @@ pipeline {
         stage('Clone Project') {
             steps {
                 echo "Cloning repository..."
-                git url: "${REPO}"
+                git url: "${REPO}", branch: 'main'
             }
         }
 
